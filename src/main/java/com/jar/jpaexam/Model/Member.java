@@ -1,11 +1,12 @@
 package com.jar.jpaexam.Model;
 
+import com.jar.jpaexam.constant.Role;
+import com.jar.jpaexam.dto.MemberFormDto;
 import lombok.Data;
 import lombok.ToString;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
-import com.jar.jpaexam.constant.Role;
 
 @Entity
 @Data
@@ -31,6 +32,7 @@ public class Member {
     public static Member createMember(MemberFormDto dto, PasswordEncoder passwordEncoder){
         Member member = new Member();
         member.setAddress(dto.getName());
+        member.setEmail(dto.getEmail());
         member.setName(dto.getName());
         String password = passwordEncoder.encode(dto.getPassword());
         member.setPassword(password);

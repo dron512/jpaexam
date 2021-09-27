@@ -1,5 +1,8 @@
 package com.jar.jpaexam.controller;
 
+import com.jar.jpaexam.Model.Member;
+import com.jar.jpaexam.dto.MemberFormDto;
+import com.jar.jpaexam.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -37,7 +40,8 @@ public class MemberController {
             memberService.saveMember(member);
         } catch (IllegalStateException e){
             model.addAttribute("errorMessage", e.getMessage());
-            return "member/memberForm";
+//            return "member/memberForm";
+            return "redirect:/";
         }
 
         return "redirect:/";

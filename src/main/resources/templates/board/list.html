@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+    <style>
+        .fieldError {
+            color: #bd2130;
+        }
+    </style>
+</th:block>
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+
+    <script th:inline="javascript">
+        $(document).ready(function(){
+            var errorMessage = [[${errorMessage}]];
+            if(errorMessage != null){
+                alert(errorMessage);
+            }
+        });
+    </script>
+
+</th:block>
+
+<div layout:fragment="content">
+
+    <div>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">제목</th>
+                <th scope="col">내용</th>
+                <th scope="col">이름</th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr th:each="dto : ${list}">
+                    <td th:text="${dto.id}">Otto</td>
+                    <td th:text="${dto.title}">Otto</td>
+                    <td ><a th:href="@{/board/view(id=${dto.id})}"  th:text="${dto.content}" ></a></td>
+                    <td th:text="${dto.name}">Mark</td>
+                </tr>
+            </tbody>
+        </table>
+        <div>
+            <nav class="d-flex justify-content-center" aria-label="page">
+                <ul class="pagination">
+                    <li class="page-item" th:classappend="${1==pagenum+1}?'disabled'">
+                        <a class="page-link" href="#" tabindex="-1">Previous</a>
+                    </li>
+                    <li class="page-item" th:classappend="${i==(pagenum+1)}?'active'" th:each="i : ${#numbers.sequence(1,list.TotalPages)}">
+                        <a class="page-link" href="#" th:href="@{/board/list(pagenum=${i})}" th:text="${i}">1</a>
+                    </li>
+                    <li class="page-item" th:classappend="${list.TotalPages==pagenum+1}?'disabled'">
+                        <a class="page-link" href="#">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div class="d-flex justify-content-end">
+            <a class="btn btn-primary" th:href="@{/board/form}" href="">글쓰기</a>
+        </div>
+    </div>
+
+</div>
+
