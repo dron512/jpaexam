@@ -1,5 +1,6 @@
 package com.jar.jpaexam.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -22,5 +23,6 @@ public class Board {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "board_id")
+    @JsonIgnore
     private List<Board_tail> board_tailLists;
 }

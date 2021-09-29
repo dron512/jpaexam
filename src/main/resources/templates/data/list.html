@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layouts/layout1}">
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+  <style>
+    .fieldError {
+      color: #bd2130;
+    }
+  </style>
+</th:block>
+<th:block layout:fragment="script">
+  <script src="https://d3js.org/d3.v4.js"></script>
+  <script th:inline="javascript">
+    $(document).ready(function () {
+      var errorMessage = [[${ errorMessage }]];
+      if (errorMessage != null) {
+        alert(errorMessage);
+      }
+
+      // set the dimensions and margins of the graph
+      var margin = { top: 10, right: 30, bottom: 30, left: 50 },
+        width = 800 - margin.left - margin.right,
+        height = 400 - margin.top - margin.bottom;
+
+      // append the svg object to the body of the page
+      var svg = d3.select("#my_dataviz")
+        .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform",
+          "translate(" + margin.left + "," + margin.top + ")");
+
+      //Read the data
+      d3.csv("/csv/sangsan.csv",
+
+        // When reading the csv, I must format variables:
+        function (d) {
+          console.log(d);
+          return { date: d3.timeParse("%Y-%m-%d")(d.date), value: d.value }
+        },
+
+        // Now I can use this dataset:
+        function (data) {
+
+          // Add X axis --> it is a date format
+          var x = d3.scaleTime()
+            .domain(d3.extent(data, function (d) { return d.date; }))
+            .range([0, width]);
+          svg.append("g")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(x));
+
+          // Add Y axis
+          var y = d3.scaleLinear()
+            .domain([0, d3.max(data, function (d) { return +d.value; })])
+            .range([height, 0]);
+          svg.append("g")
+            .call(d3.axisLeft(y));
+
+          // Add the area
+          svg.append("path")
+            .datum(data)
+            .attr("fill", "#cce5df")
+            .attr("stroke", "#69b3a2")
+            .attr("stroke-width", 1.5)
+            .attr("d", d3.area()
+              .x(function (d) { return x(d.date) })
+              .y0(y(0))
+              .y1(function (d) { return y(d.value) })
+            )
+        });
+    });
+  </script>
+
+</th:block>
+<!--
+    2021년 3월 11일 등록
+    2021년 4월 29일 수정
+
+    산업통상자원부_부품소재 생산통계_소재부품생산지수통계(생산)
+    https://www.data.go.kr/data/3040007/fileData.do#tab-layer-file
+
+    산업통상자원부_부품소재 생산통계_소재부품생산지수통계(출하)
+    https://www.data.go.kr/data/15068961/fileData.do
+
+    산업통상자원부_부품소재 생산통계_소재부품생산지수통계(재고)
+    https://www.data.go.kr/data/15068964/fileData.do
+
+    소재부품 검색
+    https://www.data.go.kr/tcs/dss/selectDataSetList.do?keyword=%EC%86%8C%EC%9E%AC%EB%B6%80%ED%92%88&brm=&svcType=&instt=&recmSe=N&conditionType=init&extsn=&kwrdArray=
+-->
+
+
+<!-- Create a div where the graph will take place -->
+<div class="container" layout:fragment="content">
+  <div class="row justify-content-center">
+    <h3>산업통상자원부_부품소재 생산통계_소재부품생산지수통계(생산)</h3>
+    <div>
+      <div id="my_dataviz"></div>
+    </div>
+  </div>
+  <div class="row justify-content-center">
+    <h3>산업통상자원부_부품소재 생산통계_소재부품생산지수통계(출하)</h3>
+    <div>
+      <div id="my_dataviz0"></div>
+    </div>
+  </div>
+  <div class="row justify-content-center">
+    <h3>산업통상자원부_부품소재 생산통계_소재부품생산지수통계(재고)</h3>
+    <div>
+      <div id="my_dataviz1"></div>
+    </div>
+  </div>
+</div>
