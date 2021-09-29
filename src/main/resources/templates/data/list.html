@@ -11,7 +11,7 @@
   </style>
 </th:block>
 <th:block layout:fragment="script">
-  <script src="https://d3js.org/d3.v4.js"></script>
+  <script src="https://d3js.org/d3.v6.js"></script>
   <script th:inline="javascript">
     $(document).ready(function () {
       var errorMessage = [[${ errorMessage }]];
@@ -20,59 +20,80 @@
       }
 
       // set the dimensions and margins of the graph
-      var margin = { top: 10, right: 30, bottom: 30, left: 50 },
+      const margin = { top: 10, right: 30, bottom: 30, left: 40 },
         width = 800 - margin.left - margin.right,
         height = 400 - margin.top - margin.bottom;
 
       // append the svg object to the body of the page
-      var svg = d3.select("#my_dataviz")
+      const svg = d3.select("#my_dataviz")
         .append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
         .attr("transform",
-          "translate(" + margin.left + "," + margin.top + ")");
+          `translate(${margin.left},${margin.top})`);
 
-      //Read the data
-      d3.csv("/csv/sangsan.csv",
+      // get the data
+      d3.csv("/csv/sangsan.csv").then(function (data) {
+        console.log(data[0]);
 
-        // When reading the csv, I must format variables:
-        function (d) {
-          console.log(d);
-          return { date: d3.timeParse("%Y-%m-%d")(d.date), value: d.value }
-        },
+        // X axis: scale and draw:
+        // minDate = d3.min(data, function(d) { return Date.parse(d.date); });
+        // maxDate = d3.max(data, function(d) { return Date.parse(d.date); });
+        // const x = d3.scaleLinear()
+        //   .domain([1,12])
+        //   .range([0, width]);
+        // svg.append("g")
+        //   .attr("transform", `translate(0, ${height})`)
+        //   .call(d3.axisBottom(x));
 
-        // Now I can use this dataset:
-        function (data) {
+        // // set the parameters for the histogram
+        // const histogram = d3.histogram()
+        //   .value(function (d) { return +d.value; })   // I need to give the vector of value
+        //   .domain(x.domain())  // then the domain of the graphic
+        //   .thresholds(x.ticks(40)); // then the numbers of bins
 
-          // Add X axis --> it is a date format
-          var x = d3.scaleTime()
-            .domain(d3.extent(data, function (d) { return d.date; }))
-            .range([0, width]);
-          svg.append("g")
-            .attr("transform", "translate(0," + height + ")")
-            .call(d3.axisBottom(x));
+        // // And apply twice this function to data to get the bins.
+        // const bins1 = histogram(data.filter(function (d) { return d.type === "variable 1" }));
+        // const bins2 = histogram(data.filter(function (d) { return d.type === "variable 2" }));
 
-          // Add Y axis
-          var y = d3.scaleLinear()
-            .domain([0, d3.max(data, function (d) { return +d.value; })])
-            .range([height, 0]);
-          svg.append("g")
-            .call(d3.axisLeft(y));
+        // Y axis: scale and draw:
+        var mdate = [{ "date": 202001 }, { "date": 202002 }, { "date": 202003 }, { "date": 202004 }, { "date": 202005 }, { "date": 202006 }, { "date": 202007 }];
+        const x = d3.scaleTime()
+          .domain(
+            d3.min(mdate, function (d) { return new Date(d.date); }),
+            d3.max(mdate, function (d) { return new Date(d.date); }))
+          .range([0, width]);
+        svg.append("g")
+          .attr("transform", `translate(0,${height})`)
+          .call(d3.axisBottom(x));
 
-          // Add the area
-          svg.append("path")
-            .datum(data)
-            .attr("fill", "#cce5df")
-            .attr("stroke", "#69b3a2")
-            .attr("stroke-width", 1.5)
-            .attr("d", d3.area()
-              .x(function (d) { return x(d.date) })
-              .y0(y(0))
-              .y1(function (d) { return y(d.value) })
-            )
-        });
+        // Add Y axis
+        const y = d3.scaleLinear()
+          .domain([0, 150])
+          .range([height, 0]);
+        svg.append("g")
+          .call(d3.axisLeft(y));
+
+        // Add the area
+        svg.append("path")
+          .datum(data)
+          .attr("fill", "#cce5df")
+          .attr("stroke", "#69b3a2")
+          .attr("stroke-width", 1.5)
+          .attr("d", d3.area()
+            .x(d => x(d.date))
+            .y0(y(0))
+            .y1(d => y(d.value))
+          )
+        // Handmade legend
+        svg.append("circle").attr("cx", 570).attr("cy", 30).attr("r", 6).style("fill", "#69b3a2")
+        svg.append("circle").attr("cx", 570).attr("cy", 60).attr("r", 6).style("fill", "#404080")
+        svg.append("text").attr("x", 600).attr("y", 30).text("월생산량").style("font-size", "15px").attr("alignment-baseline", "middle")
+        svg.append("text").attr("x", 600).attr("y", 60).text("전년동월대비증가율").style("font-size", "15px").attr("alignment-baseline", "middle")
+      });
     });
+
   </script>
 
 </th:block>
