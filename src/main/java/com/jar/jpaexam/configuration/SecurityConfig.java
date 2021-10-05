@@ -23,18 +23,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.formLogin()
-                .loginPage("/members/login")
-                .defaultSuccessUrl("/")
-                .usernameParameter("email")
-                .failureUrl("/members/login/error")
-                .and()
-                .logout()
-                .logoutRequestMatcher(new AntPathRequestMatcher("/members/logout"))
-                .logoutSuccessUrl("/")
+            .loginPage("/members/login")
+            .defaultSuccessUrl("/")
+            .usernameParameter("email")
+            .failureUrl("/members/login/error")
+            .and()
+            .logout()
+            .logoutRequestMatcher(new AntPathRequestMatcher("/members/logout"))
+            .logoutSuccessUrl("/")
         ;
 
         http.authorizeRequests()
-                .mvcMatchers("/","/rest/**","/board/**","/data/**", "/members/**", "/css/**","/csv/**", "/js/**", "/images/**").permitAll()
+                .mvcMatchers("/","/rest/**","/board/**","/fileboard/**","/data/**", "/members/**", "/css/**","/csv/**", "/js/**", "/images/**").permitAll()
                 .mvcMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
         ;

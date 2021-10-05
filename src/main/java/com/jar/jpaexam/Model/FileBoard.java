@@ -12,7 +12,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class Board {
+public class FileBoard {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;
@@ -20,9 +20,10 @@ public class Board {
     private String name;
     private String title;
     private String content;
+    private String file;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "board_id")
+    @JoinColumn(name = "board_file_id")
     @JsonIgnore
-    private List<BoardTail> board_tailLists;
+    private List<FileBoardTail> board_file_tailList;
 }

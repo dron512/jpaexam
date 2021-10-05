@@ -1,7 +1,7 @@
 package com.jar.jpaexam.controller;
 
 import com.jar.jpaexam.Model.Board;
-import com.jar.jpaexam.Model.Board_tail;
+import com.jar.jpaexam.Model.BoardTail;
 import com.jar.jpaexam.repository.BoardRepository;
 import com.jar.jpaexam.repository.BoardTailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +47,7 @@ public class BoardController {
     }
 
     @GetMapping(value = "formtail")
-    public String formtail(Model model,Board_tail board_tail){
+    public String formtail(Model model, BoardTail board_tail){
         System.out.println(board_tail);
         boardTailRepository.save(board_tail);
         return "redirect:/board/view?id="+board_tail.getBoard_id();

@@ -9,7 +9,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @ToString
-public class Board_tail {
+public class BoardTail {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
